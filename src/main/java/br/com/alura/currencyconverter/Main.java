@@ -1,11 +1,11 @@
 package br.com.alura.currencyconverter;
 
-import io.github.cdimascio.dotenv.Dotenv;
+import br.com.alura.currencyconverter.resource.ExchangeRateAPIRequest;
 
 public class Main {
 
   public static void main(String[] args) {
-    System.out.println(Dotenv.load().get("WELCOME"));
+    System.out.println(ExchangeRateAPIRequest.get("BRL"));
   }
 
 
