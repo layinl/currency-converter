@@ -1,5 +1,7 @@
 package br.com.alura.currencyconverter.resource;
 
+import br.com.alura.currencyconverter.exception.CurrencyNotAllowedException;
+import br.com.alura.currencyconverter.exception.CurrencyNotFoundException;
 import io.github.cdimascio.dotenv.Dotenv;
 
 import java.io.IOException;
@@ -17,11 +19,19 @@ public class ExchangeRateAPIRequest {
         .build();
       HttpResponse<String> response = client
         .send(request, HttpResponse.BodyHandlers.ofString());
+      if (response.body().contains("unsupported-code"))
+        throw new CurrencyNotFoundException();
+      CurrencyCodeCheck.isValid(currency);
       return response.body();
+    } catch (CurrencyNotAllowedException | CurrencyNotFoundException e) {
+      System.out.println(STR."Ocorreu um erro na moeda inserida: \{e.getMessage()}");
     } catch (IOException | InterruptedException e) {
-      System.out.println(e.getMessage());
+      System.out.println(STR."Ocorreu um erro na requisição: \{e.getMessage()}");
+    } catch (Exception e) {
+      System.out.println(STR."Ocorreu um erro inesperado: \{e.getMessage()}");
     }
-    return "Error";
+    // just a workaround for now
+    return "error";
   }
 
 }
