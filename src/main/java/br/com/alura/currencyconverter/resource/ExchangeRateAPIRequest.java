@@ -21,7 +21,7 @@ public class ExchangeRateAPIRequest {
         .send(request, HttpResponse.BodyHandlers.ofString());
       if (response.body().contains("unsupported-code"))
         throw new CurrencyNotFoundException();
-      CurrencyCodeCheck.isValid(currency);
+      CurrencyCodeOp.isValid(currency);
       return response.body();
     } catch (CurrencyNotAllowedException | CurrencyNotFoundException e) {
       System.out.println(STR."Ocorreu um erro na moeda inserida: \{e.getMessage()}");
