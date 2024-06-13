@@ -23,7 +23,6 @@ public class Main {
 
     System.out.println("Bem vindo ao conversor de moedas!");
     do {
-      // ARS|BOB|BRL|CLP|COP|USD
       System.out.println("""
         Selecione a moeda:
         1. USD
@@ -45,7 +44,6 @@ public class Main {
     } while (option < 1 || option > 6);
 
     do {
-      // ARS|BOB|BRL|CLP|COP|USD
       System.out.println("""
         Selecione a moeda para converter:
         1. USD
@@ -70,7 +68,7 @@ public class Main {
       currency = gson
         .fromJson(ExchangeRateAPIRequest.get(firstCode), Currency.class);
       System.out.println("Qual o valor?");
-      System.out.println(currency.convert(scan.nextDouble(), secondCode));
+      System.out.println(STR."\{firstCode} em \{secondCode}: \{currency.convert(scan.nextDouble(), secondCode)}");
     } catch (InputMismatchException e) {
       System.out.println("Por favor, digite um número");
     } catch (JsonSyntaxException e) {

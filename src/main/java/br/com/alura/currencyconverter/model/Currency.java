@@ -6,6 +6,12 @@ import java.util.Map;
 import java.util.TreeMap;
 import java.util.regex.Pattern;
 
+/**
+ * The currency model represents the currency created based on its
+ * code and the respective conversion rates
+ * @param code the currency code (like USD for dolar)
+ * @param conversionRates
+ */
 public record Currency(
   @SerializedName("base_code")
   String code,

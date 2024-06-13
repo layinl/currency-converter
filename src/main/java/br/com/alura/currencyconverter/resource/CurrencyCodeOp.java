@@ -30,7 +30,7 @@ public class CurrencyCodeOp {
     } catch (InvalidOptionException e) {
       System.out.println(e.getMessage());
     }
-    return "cu";
+    return "";
   }
 
 }
