@@ -64,16 +64,20 @@ public class Main {
       }
     } while (option < 1 || option > 6);
 
-    try {
+    do try {
       currency = gson
         .fromJson(ExchangeRateAPIRequest.get(firstCode), Currency.class);
       System.out.println("Qual o valor?");
       System.out.println(STR."\{firstCode} em \{secondCode}: \{currency.convert(scan.nextDouble(), secondCode)}");
+
+      return;
     } catch (InputMismatchException e) {
       System.out.println("Por favor, digite um número");
+      scan.next(); // had to use this because of this stupid input buffering
     } catch (JsonSyntaxException e) {
       System.out.println("Por favor, digite um valor válido");
-    }
+      scan.next();// had to use this because of this stupid input buffering
+    } while (true);
   }
 
 
