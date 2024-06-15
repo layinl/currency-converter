@@ -7,8 +7,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonSyntaxException;
 
-import java.util.InputMismatchException;
-import java.util.Scanner;
+import java.util.*;
 
 public class Main {
 
@@ -20,65 +19,79 @@ public class Main {
     Scanner scan = new Scanner(System.in);
     String firstCode = "", secondCode = "";
     int option = 0;
+    Map<String, Currency> currencies = new TreeMap<>();
 
     System.out.println("Bem vindo ao conversor de moedas!");
     do {
       System.out.println("""
-        Selecione a moeda:
-        1. USD
-        2. BRL
-        3. ARS
-        4. BOB
-        5. CLP
-        6. COP
-        Digite -1 para sair
-        """
+          Selecione a moeda:
+          1. USD
+          2. BRL
+          3. ARS
+          4. BOB
+          5. CLP
+          6. COP
+          Digite -1 para sair
+          """
       );
-      try {
-        option = scan.nextInt();
-        if (option == -1) return;
-        firstCode = CurrencyCodeOp.getCode(option);
-      } catch (InputMismatchException e) {
-        System.out.println("Por favor, digite um número inteiro das opções");
-      }
-    } while (option < 1 || option > 6);
+      do {
+        try {
+          option = scan.nextInt();
+          if (option == -1) return;
+          firstCode = CurrencyCodeOp.getCode(option);
+        } catch (InputMismatchException e) {
+          System.out.println("Por favor, digite um número inteiro das opções");
+        }
+      } while (option < 1 || option > 6);
 
-    do {
       System.out.println("""
-        Selecione a moeda para converter:
-        1. USD
-        2. BRL
-        3. ARS
-        4. BOB
-        5. CLP
-        6. COP
-        Digite -1 para sair
-        """
+          Selecione a moeda para converter:
+          1. USD
+          2. BRL
+          3. ARS
+          4. BOB
+          5. CLP
+          6. COP
+          Digite -1 para sair
+          """
       );
+      do {
+        try {
+          option = scan.nextInt();
+          if (option == -1) return;
+          secondCode = CurrencyCodeOp.getCode(option);
+        } catch (InputMismatchException e) {
+          System.out.println("Por favor, digite um número inteiro das opções");
+        }
+      } while (option < 1 || option > 6);
+
+      if (!currencies.containsKey(firstCode)) {
+        currency = gson
+          .fromJson(ExchangeRateAPIRequest.get(firstCode), Currency.class);
+        currencies.put(firstCode, currency);
+      } else {
+        currency = currencies.get(firstCode);
+      }
+      System.out.println("Qual o valor?");
+      do {
+        try {
+          System.out.println(STR."\{firstCode} em \{secondCode}: \{currency.convert(scan.nextDouble(), secondCode)}");
+          break;
+        } catch (InputMismatchException e) {
+          System.out.println("Por favor, digite um número");
+          scan.next(); // had to use this because of this stupid input buffering
+        } catch (JsonSyntaxException e) {
+          System.out.println("Por favor, digite um valor válido");
+          scan.next();// had to use this because of this stupid input buffering
+        }
+      } while (true); // don't worry. This loop will end eventually
+      System.out.println("Deseja converter mais? Digite -1 para encerrar");
       try {
         option = scan.nextInt();
-        if (option == -1) return;
-        secondCode = CurrencyCodeOp.getCode(option);
       } catch (InputMismatchException e) {
-        System.out.println("Por favor, digite um número inteiro das opções");
+        scan.next(); // mas que raiva desse scan...
       }
-    } while (option < 1 || option > 6);
-
-    do try {
-      currency = gson
-        .fromJson(ExchangeRateAPIRequest.get(firstCode), Currency.class);
-      System.out.println("Qual o valor?");
-      System.out.println(STR."\{firstCode} em \{secondCode}: \{currency.convert(scan.nextDouble(), secondCode)}");
-
-      return;
-    } catch (InputMismatchException e) {
-      System.out.println("Por favor, digite um número");
-      scan.next(); // had to use this because of this stupid input buffering
-    } catch (JsonSyntaxException e) {
-      System.out.println("Por favor, digite um valor válido");
-      scan.next();// had to use this because of this stupid input buffering
-    } while (true);
+    } while (option != -1);
   }
-
 
 }

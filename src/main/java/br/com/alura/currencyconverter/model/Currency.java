@@ -3,6 +3,7 @@ package br.com.alura.currencyconverter.model;
 import com.google.gson.annotations.SerializedName;
 
 import java.util.Map;
+import java.util.Objects;
 import java.util.TreeMap;
 import java.util.regex.Pattern;
 
@@ -30,8 +31,17 @@ public record Currency(
     });
   }
 
+
   public Double convert(Double amount, String currencyCode) {
     return Math.round(amount * conversionRates.get(currencyCode) * 100) / 100.0;
+  }
+
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) return true;
+    if (o == null || getClass() != o.getClass()) return false;
+    Currency currency = (Currency) o;
+    return Objects.equals(code, currency.code);
   }
 
 }
