@@ -10,7 +10,7 @@ import java.util.regex.Pattern;
 /**
  * The currency model represents the currency created based on its
  * code and the respective conversion rates
- * @param code the currency code (like USD for dolar)
+ * @param code the currency code (like USD for dollar)
  * @param conversionRates
  */
 public record Currency(
