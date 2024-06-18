@@ -31,7 +31,12 @@ public record Currency(
     });
   }
 
-
+  /**
+   * Converts the value to the target currency equivalent
+   * @param amount the value to be converted
+   * @param currencyCode the target currency code
+   * @return the target currency's equivalent value, rounded
+   */
   public Double convert(Double amount, String currencyCode) {
     return Math.round(amount * conversionRates.get(currencyCode) * 100) / 100.0;
   }
