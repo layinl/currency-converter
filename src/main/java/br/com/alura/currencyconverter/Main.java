@@ -1,12 +1,19 @@
 package br.com.alura.currencyconverter;
 
+import br.com.alura.currencyconverter.exception.CurrencyNotAllowedException;
+import br.com.alura.currencyconverter.exception.CurrencyNotFoundException;
 import br.com.alura.currencyconverter.model.Currency;
 import br.com.alura.currencyconverter.resource.CurrencyCodeOp;
-import br.com.alura.currencyconverter.resource.ExchangeRateAPIRequest;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonSyntaxException;
+import io.github.cdimascio.dotenv.Dotenv;
 
+import java.io.IOException;
+import java.net.URI;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
 import java.util.*;
 
 public class Main {
@@ -67,7 +74,7 @@ public class Main {
 
       if (!currencies.containsKey(firstCode)) {
         currency = gson
-          .fromJson(ExchangeRateAPIRequest.get(firstCode), Currency.class);
+          .fromJson(getfromAPI(firstCode), Currency.class);
         currencies.put(firstCode, currency);
       } else {
         currency = currencies.get(firstCode);
@@ -92,6 +99,41 @@ public class Main {
         scan.next(); // mas que raiva desse scan...
       }
     } while (option != -1);
+    System.out.println(
+      """
+      Obrigado por utilizar o Conversor de Moedas!
+      Criado por layinl
+      """
+    );
+  }
+
+  /**
+   * Sends an API request to <a href="https://v6.exchangerate-api
+   * .com/">Exchange Rate API</a>, fetching and returning the currency's
+   * data as JSON
+   * @param currency the currency code to search
+   * @return the currency data as JSON
+   */
+  private static String getfromAPI(final String currency) {
+    try (HttpClient client = HttpClient.newHttpClient()) {
+      HttpRequest request = HttpRequest.newBuilder()
+        .uri(URI.create(STR."https://v6.exchangerate-api.com/v6/\{Dotenv.load().get("API_KEY")}/latest/\{currency}"))
+        .build();
+      HttpResponse<String> response = client
+        .send(request, HttpResponse.BodyHandlers.ofString());
+//      if (response.body().contains("unsupported-code"))
+//        throw new CurrencyNotFoundException();
+//      CurrencyCodeOp.isValid(currency);
+      return response.body();
+    } catch (CurrencyNotAllowedException | CurrencyNotFoundException e) {
+      System.out.println(STR."Ocorreu um erro na moeda inserida: \{e.getMessage()}");
+    } catch (IOException | InterruptedException e) {
+      System.out.println(STR."Ocorreu um erro na requisição: \{e.getMessage()}");
+    } catch (Exception e) {
+      System.out.println(STR."Ocorreu um erro inesperado: \{e.getMessage()}");
+    }
+    // idk
+    return "error";
   }
 
 }
